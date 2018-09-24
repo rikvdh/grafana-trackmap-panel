@@ -12,6 +12,8 @@ const panelDefaults = {
   autoZoom: true,
   lineColor: 'red',
   pointColor: 'royalblue',
+  lineWidth: 3,
+  showPoints: false,
 }
 
 export class TrackMapCtrl extends MetricsPanelCtrl {
@@ -23,6 +25,7 @@ export class TrackMapCtrl extends MetricsPanelCtrl {
     this.coords = [];
     this.leafMap = null;
     this.polyline = null;
+    this.dots = [];
     this.hoverMarker = null;
     this.hoverTarget = null;
 
@@ -56,7 +59,7 @@ export class TrackMapCtrl extends MetricsPanelCtrl {
     }
 
     // check for initial show of the marker
-    if (this.hoverTarget == null){
+    if (this.hoverTarget == null) {
       this.hoverMarker.bringToFront()
                       .setStyle({
                         fillColor: this.panel.pointColor,
@@ -110,6 +113,12 @@ export class TrackMapCtrl extends MetricsPanelCtrl {
     if (this.leafMap) {
       if (this.polyline) {
         this.polyline.removeFrom(this.leafMap);
+      }
+      if (this.dots) {
+	for (var i = 0; i < this.dots.length; i++) { 
+            this.dots[i].removeFrom(this.leafMap);
+        }
+        this.dots = [];
       }
       this.onPanelClear();
       return;
@@ -198,10 +207,23 @@ export class TrackMapCtrl extends MetricsPanelCtrl {
 
   // Add the circles and polyline to the map
   addDataToMap() {
+
+    if (this.panel.showPoints) {
+    for (var i = 0; i < this.coords.length; i++) {
+        this.dots.push(L.circleMarker(this.coords[i].position, {
+            fillColor: 'red',
+            color: 'black',
+            fillOpacity: 1,
+            weight: 2,
+            radius: 4
+        }).addTo(this.leafMap));
+    }
+    }
+
     this.polyline = L.polyline(
       this.coords.map(x => x.position, this), {
         color: this.panel.lineColor,
-        weight: 3,
+        weight: this.panel.lineWidth,
       }
     ).addTo(this.leafMap);
 
