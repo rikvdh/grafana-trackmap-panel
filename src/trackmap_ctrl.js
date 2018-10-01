@@ -232,7 +232,7 @@ export class TrackMapCtrl extends MetricsPanelCtrl {
 
   zoomToFit(){
     if (this.panel.autoZoom){
-      this.leafMap.fitBounds(this.polyline.getBounds());
+      this.leafMap.fitBounds(this.polyline.getBounds(), {padding: L.point(150, 150)});
     }
   }
 
